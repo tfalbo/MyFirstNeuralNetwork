@@ -26,8 +26,8 @@ class NeuralNetwork(object):
         # You can uncomment out the following three lines and put your
         # implementation there instead.
         #
-        def sigmoid(x):
-           return 1/(1+np.exp(-x))  # Replace 0 with your sigmoid calculation here
+        def sigmoid(Z):
+           return 1/(1+np.exp(-Z))  # Replace 0 with your sigmoid calculation here
         
         self.activation_function = sigmoid
 
@@ -70,7 +70,7 @@ class NeuralNetwork(object):
 
         # TODO: Output layer - Replace these values with your calculations.
         final_inputs = np.dot(hidden_outputs, self.weights_hidden_to_output)  # signals into final output layer
-        final_outputs = self.activation_function(final_inputs) # signals from final output layer
+        final_outputs = final_inputs # signals from final output layer
 
         return final_outputs, hidden_outputs
 
@@ -95,13 +95,12 @@ class NeuralNetwork(object):
         output_error_term = error
         
         # TODO: Calculate the hidden layer's contribution to the error
-        hidden_error = np.dot(self.weights_hidden_to_output, output_error_term)
+        hidden_error = np.dot(self.weights_hidden_to_output,output_error_term)
 
         hidden_error_term = hidden_error * hidden_outputs * (1 - hidden_outputs)
 
         # Weight step (input to hidden)
         delta_weights_i_h += hidden_error_term * X[:, None]
-       
         # Weight step (hidden to output)
         delta_weights_h_o +=  output_error_term * hidden_outputs[:,None]
         
@@ -117,8 +116,8 @@ class NeuralNetwork(object):
             n_records: number of records
 
         '''
-        self.weights_hidden_to_output += self.lr * delta_weights_h_o # update hidden-to-output weights with gradient descent step
-        self.weights_input_to_hidden += self.lr * delta_weights_i_h # update input-to-hidden weights with gradient descent step
+        self.weights_hidden_to_output += self.lr * delta_weights_h_o / n_records # update hidden-to-output weights with gradient descent step
+        self.weights_input_to_hidden += self.lr * delta_weights_i_h / n_records # update input-to-hidden weights with gradient descent step
 
     def run(self, features):
         ''' Run a forward pass through the network with input features
@@ -135,7 +134,7 @@ class NeuralNetwork(object):
 
         # TODO: Output layer - Replace these values with the appropriate calculations.
         final_inputs = np.dot(hidden_outputs, self.weights_hidden_to_output) # signals into final output layer
-        final_outputs = self.activation_function(final_inputs) # signals from final output layer
+        final_outputs = final_inputs # signals from final output layer
 
         return final_outputs
 
@@ -143,7 +142,7 @@ class NeuralNetwork(object):
 #########################################################
 # Set your hyperparameters here
 ##########################################################
-iterations = 5000
+iterations = 3500
 learning_rate = 0.5
 hidden_nodes = 10
 output_nodes = 1
